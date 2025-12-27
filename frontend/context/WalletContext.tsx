@@ -5,7 +5,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { AppConfig, UserSession } from '@stacks/connect';
+import { authenticate } from '@stacks/connect';
 import { isOwner } from '@/lib/contract';
 import type { WalletState, NetworkType } from '@/utils/types';
 import { toast } from '@/components/UI/Toast';
@@ -74,7 +75,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     setIsConnecting(true);
 
     try {
-      showConnect({
+      authenticate({
         appDetails: {
           name: 'TickSTX',
           icon: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
