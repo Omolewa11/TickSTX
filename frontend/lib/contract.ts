@@ -1,9 +1,14 @@
 // ========================================
-// Smart Contract Interaction Functions
+// Smart Contract Interaction Functions (@stacks/connect)
 // ========================================
 
-import { callContract } from './walletconnect';
-import { fetchCallReadOnlyFunction, cvToJSON, uintCV } from '@stacks/transactions';
+import { openContractCall } from '@stacks/connect';
+import {
+  fetchCallReadOnlyFunction,
+  cvToJSON,
+  uintCV,
+  PostConditionMode,
+} from '@stacks/transactions';
 import { STACKS_MAINNET, STACKS_TESTNET } from '@stacks/network';
 
 /**
@@ -98,20 +103,27 @@ export async function getContractOwner(): Promise<string> {
  * Calls: increment (public function)
  */
 export async function incrementCounter(): Promise<{ txid: string; transaction: string }> {
-  const { fullContractId } = getContractInfo();
+  const { contractAddress, contractName } = getContractInfo();
+  const network = getNetwork();
 
-  try {
-    const result = await callContract({
-      contract: fullContractId,
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress,
+      contractName,
       functionName: 'increment',
       functionArgs: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log('Transaction submitted:', data.txId);
+        resolve({ txid: data.txId, transaction: data.txId });
+      },
+      onCancel: () => {
+        reject(new Error('Transaction cancelled'));
+      },
     });
-
-    return result;
-  } catch (error) {
-    console.error('Error incrementing counter:', error);
-    throw new Error('Failed to increment counter');
-  }
+  });
 }
 
 /**
@@ -120,20 +132,27 @@ export async function incrementCounter(): Promise<{ txid: string; transaction: s
  * @throws Error if counter is already at zero (ERR_UNDERFLOW)
  */
 export async function decrementCounter(): Promise<{ txid: string; transaction: string }> {
-  const { fullContractId } = getContractInfo();
+  const { contractAddress, contractName } = getContractInfo();
+  const network = getNetwork();
 
-  try {
-    const result = await callContract({
-      contract: fullContractId,
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress,
+      contractName,
       functionName: 'decrement',
       functionArgs: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log('Transaction submitted:', data.txId);
+        resolve({ txid: data.txId, transaction: data.txId });
+      },
+      onCancel: () => {
+        reject(new Error('Transaction cancelled'));
+      },
     });
-
-    return result;
-  } catch (error) {
-    console.error('Error decrementing counter:', error);
-    throw new Error('Failed to decrement counter');
-  }
+  });
 }
 
 /**
@@ -143,27 +162,31 @@ export async function decrementCounter(): Promise<{ txid: string; transaction: s
  * @throws Error if amount is 0 (ERR_INVALID_AMOUNT)
  */
 export async function incrementBy(amount: number): Promise<{ txid: string; transaction: string }> {
-  const { fullContractId } = getContractInfo();
+  const { contractAddress, contractName } = getContractInfo();
+  const network = getNetwork();
 
   if (amount <= 0) {
     throw new Error('Amount must be greater than 0');
   }
 
-  try {
-    // Convert amount to Clarity uint
-    const amountArg = uintCV(amount);
-
-    const result = await callContract({
-      contract: fullContractId,
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress,
+      contractName,
       functionName: 'increment-by',
-      functionArgs: [amountArg.toString()],
+      functionArgs: [uintCV(amount)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log('Transaction submitted:', data.txId);
+        resolve({ txid: data.txId, transaction: data.txId });
+      },
+      onCancel: () => {
+        reject(new Error('Transaction cancelled'));
+      },
     });
-
-    return result;
-  } catch (error) {
-    console.error('Error incrementing counter by amount:', error);
-    throw new Error(`Failed to increment counter by ${amount}`);
-  }
+  });
 }
 
 /**
@@ -174,27 +197,31 @@ export async function incrementBy(amount: number): Promise<{ txid: string; trans
  * @throws Error if counter < amount (ERR_UNDERFLOW)
  */
 export async function decrementBy(amount: number): Promise<{ txid: string; transaction: string }> {
-  const { fullContractId } = getContractInfo();
+  const { contractAddress, contractName } = getContractInfo();
+  const network = getNetwork();
 
   if (amount <= 0) {
     throw new Error('Amount must be greater than 0');
   }
 
-  try {
-    // Convert amount to Clarity uint
-    const amountArg = uintCV(amount);
-
-    const result = await callContract({
-      contract: fullContractId,
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress,
+      contractName,
       functionName: 'decrement-by',
-      functionArgs: [amountArg.toString()],
+      functionArgs: [uintCV(amount)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log('Transaction submitted:', data.txId);
+        resolve({ txid: data.txId, transaction: data.txId });
+      },
+      onCancel: () => {
+        reject(new Error('Transaction cancelled'));
+      },
     });
-
-    return result;
-  } catch (error) {
-    console.error('Error decrementing counter by amount:', error);
-    throw new Error(`Failed to decrement counter by ${amount}`);
-  }
+  });
 }
 
 /**
@@ -203,20 +230,27 @@ export async function decrementBy(amount: number): Promise<{ txid: string; trans
  * @throws Error if caller is not contract owner (ERR_UNAUTHORIZED)
  */
 export async function resetCounter(): Promise<{ txid: string; transaction: string }> {
-  const { fullContractId } = getContractInfo();
+  const { contractAddress, contractName } = getContractInfo();
+  const network = getNetwork();
 
-  try {
-    const result = await callContract({
-      contract: fullContractId,
+  return new Promise((resolve, reject) => {
+    openContractCall({
+      network,
+      contractAddress,
+      contractName,
       functionName: 'reset',
       functionArgs: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log('Transaction submitted:', data.txId);
+        resolve({ txid: data.txId, transaction: data.txId });
+      },
+      onCancel: () => {
+        reject(new Error('Transaction cancelled'));
+      },
     });
-
-    return result;
-  } catch (error) {
-    console.error('Error resetting counter:', error);
-    throw new Error('Failed to reset counter (are you the owner?)');
-  }
+  });
 }
 
 // ========================================
