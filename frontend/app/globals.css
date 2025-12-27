@@ -1,26 +1,380 @@
 @import "tailwindcss";
 
+/* ========================================
+   Dark Cyber/Web3 Theme Variables
+   ======================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #1a1a2e;
+  --bg-card: rgba(26, 26, 46, 0.8);
+
+  /* Neon Accents */
+  --neon-cyan: #00f0ff;
+  --neon-purple: #a855f7;
+  --neon-pink: #ec4899;
+  --neon-green: #00ff88;
+  --neon-red: #ff3366;
+  --neon-yellow: #ffd700;
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b7e;
+
+  /* Borders */
+  --border-default: rgba(160, 160, 184, 0.2);
+  --border-glow: rgba(0, 240, 255, 0.5);
+
+  /* Shadows */
+  --shadow-glow-cyan: 0 0 20px rgba(0, 240, 255, 0.5);
+  --shadow-glow-purple: 0 0 20px rgba(168, 85, 247, 0.5);
+  --shadow-glow-pink: 0 0 20px rgba(236, 72, 153, 0.5);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Custom Colors */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-green: var(--neon-green);
+  --color-neon-red: var(--neon-red);
+  --color-neon-yellow: var(--neon-yellow);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Font Families */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Orbitron', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   Custom Animations
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scalePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.8), 0 0 60px rgba(0, 240, 255, 0.4);
+  }
+}
+
+@keyframes rotateGradient {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+/* Glow Effects */
+.glow-cyan {
+  text-shadow: 0 0 10px var(--neon-cyan),
+               0 0 20px var(--neon-cyan),
+               0 0 30px var(--neon-cyan);
+}
+
+.glow-purple {
+  text-shadow: 0 0 10px var(--neon-purple),
+               0 0 20px var(--neon-purple),
+               0 0 30px var(--neon-purple);
+}
+
+.glow-pink {
+  text-shadow: 0 0 10px var(--neon-pink),
+               0 0 20px var(--neon-pink),
+               0 0 30px var(--neon-pink);
+}
+
+.glow-green {
+  text-shadow: 0 0 10px var(--neon-green),
+               0 0 20px var(--neon-green),
+               0 0 30px var(--neon-green);
+}
+
+/* Box Glow */
+.box-glow-cyan {
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.box-glow-purple {
+  box-shadow: var(--shadow-glow-purple);
+}
+
+.box-glow-pink {
+  box-shadow: var(--shadow-glow-pink);
+}
+
+/* Counter Glow Animation */
+.counter-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Gradient Border Card */
+.card-cyber {
+  background: var(--bg-card);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  padding: 2rem;
+}
+
+.card-cyber::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glassmorphism Effect */
+.glass {
+  background: rgba(26, 26, 46, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(160, 160, 184, 0.2);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Neon Border */
+.neon-border {
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan),
+              inset 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-scale-pulse {
+  animation: scalePulse 0.4s ease-in-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ========================================
+   Button Styles
+   ======================================== */
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: white;
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  border: 2px solid var(--neon-purple);
+  background: transparent;
+  color: var(--neon-purple);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(168, 85, 247, 0.1);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--neon-red), #ff6699);
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+}
+
+.btn-danger:hover:not(:disabled) {
+  box-shadow: 0 0 30px rgba(255, 51, 102, 0.8);
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   Scrollbar Styles
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-cyan);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-purple);
+}
+
+/* ========================================
+   Selection Styles
+   ======================================== */
+
+::selection {
+  background: var(--neon-cyan);
+  color: var(--bg-primary);
+}
+
+::-moz-selection {
+  background: var(--neon-cyan);
+  color: var(--bg-primary);
+}
+
+/* ========================================
+   Focus Styles
+   ======================================== */
+
+*:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   Loading Spinner
+   ======================================== */
+
+.spinner {
+  border: 3px solid rgba(0, 240, 255, 0.2);
+  border-top: 3px solid var(--neon-cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Background Grid Pattern
+   ======================================== */
+
+.grid-background {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center center;
 }
