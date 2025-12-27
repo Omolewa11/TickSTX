@@ -1,30 +1,30 @@
 // ========================================
-// Wallet Context - Global Wallet State
+// Wallet Context - Global Wallet State (@stacks/connect)
 // ========================================
 
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import {
-  connectWallet as wcConnect,
-  disconnectWallet as wcDisconnect,
-  getAddresses,
-  setSession,
-  getSession,
-} from '@/lib/walletconnect';
-import { getContractOwner, isOwner } from '@/lib/contract';
-import type { WalletState, NetworkType } from '@/types';
+import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { isOwner } from '@/lib/contract';
+import type { WalletState, NetworkType } from '@/utils/types';
 import { toast } from '@/components/UI/Toast';
 
 interface WalletContextType extends WalletState {
   connect: () => Promise<void>;
   disconnect: () => void;
   isConnecting: boolean;
+  userSession: UserSession | null;
 }
 
 const WalletContext = createContext<WalletContextType | null>(null);
 
+// App configuration for Stacks Connect
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+
 export function WalletProvider({ children }: { children: React.ReactNode }) {
+  const [userSession] = useState(() => new UserSession({ appConfig }));
+
   const [walletState, setWalletState] = useState<WalletState>({
     address: null,
     isConnected: false,
@@ -48,67 +48,62 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Connect wallet using WalletConnect
+   * Update wallet state from user data
    */
-  const connect = useCallback(async () => {
-    setIsConnecting(true);
-    const toastId = toast.loading('Connecting wallet...');
+  const updateWalletFromSession = useCallback(async () => {
+    if (userSession.isUserSignedIn()) {
+      const userData = userSession.loadUserData();
+      const address = userData.profile.stxAddress.mainnet;
 
-    try {
-      // Initialize WalletConnect connection
-      const { uri, approval } = await wcConnect();
-
-      // Show QR code or deep link
-      if (uri) {
-        console.log('WalletConnect URI:', uri);
-        // In a real app, display QR code modal here
-        toast.custom('Scan QR code with your wallet');
-      }
-
-      // Wait for user approval
-      const session = await approval();
-
-      // Store session
-      setSession(session);
-
-      // Get wallet addresses
-      const addresses = await getAddresses();
-
-      if (addresses.length === 0) {
-        throw new Error('No addresses found');
-      }
-
-      const userAddress = addresses[0];
-
-      // Update wallet state
       setWalletState({
-        address: userAddress,
+        address,
         isConnected: true,
-        balance: '0', // TODO: Fetch actual balance
+        balance: '0',
         network: (process.env.NEXT_PUBLIC_NETWORK as NetworkType) || 'mainnet',
         isOwner: false,
       });
 
-      // Check ownership
-      await checkOwnership(userAddress);
+      await checkOwnership(address);
+    }
+  }, [userSession, checkOwnership]);
 
-      toast.dismiss(toastId);
-      toast.success('Wallet connected!');
+  /**
+   * Connect wallet using @stacks/connect
+   */
+  const connect = useCallback(async () => {
+    setIsConnecting(true);
+
+    try {
+      showConnect({
+        appDetails: {
+          name: 'TickSTX',
+          icon: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : '/logo.png',
+        },
+        redirectTo: '/',
+        onFinish: async () => {
+          await updateWalletFromSession();
+          toast.success('Wallet connected!');
+          setIsConnecting(false);
+        },
+        onCancel: () => {
+          toast.info('Connection cancelled');
+          setIsConnecting(false);
+        },
+        userSession,
+      });
     } catch (error) {
       console.error('Failed to connect wallet:', error);
-      toast.dismiss(toastId);
       toast.error('Failed to connect wallet');
-    } finally {
       setIsConnecting(false);
     }
-  }, [checkOwnership]);
+  }, [userSession, updateWalletFromSession]);
 
   /**
    * Disconnect wallet
    */
   const disconnect = useCallback(async () => {
     try {
-      await wcDisconnect();
+      userSession.signUserOut();
 
       setWalletState({
         address: null,
@@ -123,39 +118,23 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to disconnect wallet:', error);
       toast.error('Failed to disconnect wallet');
     }
-  }, []);
+  }, [userSession]);
 
   /**
    * Restore session on mount
    */
   useEffect(() => {
-    const session = getSession();
-
-    if (session) {
-      // Restore wallet state from stored session
-      getAddresses()
-        .then((addresses) => {
-          if (addresses.length > 0) {
-            const userAddress = addresses[0];
-            setWalletState((prev) => ({
-              ...prev,
-              address: userAddress,
-              isConnected: true,
-            }));
-            checkOwnership(userAddress);
-          }
-        })
-        .catch((error) => {
-          console.error('Failed to restore session:', error);
-        });
+    if (userSession.isUserSignedIn()) {
+      updateWalletFromSession();
     }
-  }, [checkOwnership]);
+  }, [userSession, updateWalletFromSession]);
 
   const value: WalletContextType = {
     ...walletState,
     connect,
     disconnect,
     isConnecting,
+    userSession,
   };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

@@ -2,12 +2,21 @@
 // Type Definitions - TickSTX
 // ========================================
 
-export type Network = 'mainnet' | 'testnet';
+export type NetworkType = 'mainnet' | 'testnet';
+export type Network = NetworkType;
 
 export interface WalletInfo {
   address: string;
   publicKey: string;
   network: Network;
+}
+
+export interface WalletState {
+  address: string | null;
+  isConnected: boolean;
+  balance: string;
+  network: NetworkType;
+  isOwner: boolean;
 }
 
 export interface ContractCallOptions {

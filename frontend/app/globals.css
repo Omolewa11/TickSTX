@@ -1,18 +1,6 @@
-@import "tailwindcss";
-
-@theme {
-  --color-bg-primary: #0a0a0f;
-  --color-bg-secondary: #1a1a2e;
-  --color-neon-cyan: #00f0ff;
-  --color-neon-purple: #a855f7;
-  --color-neon-pink: #ec4899;
-  --color-neon-green: #00ff88;
-  --color-neon-red: #ff3366;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a0a0b8;
-  --color-text-muted: #6b6b7e;
-  --color-border-default: rgba(160, 160, 184, 0.2);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ========================================
    Dark Cyber/Web3 Theme Variables
