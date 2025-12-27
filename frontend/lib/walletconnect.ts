@@ -24,7 +24,7 @@ export const walletConnectConfig = {
 /**
  * WalletConnect client instance
  */
-let signClient: SignClient | null = null;
+let signClient: InstanceType<typeof SignClient> | null = null;
 
 /**
  * Current session
@@ -34,7 +34,7 @@ let currentSession: SessionTypes.Struct | null = null;
 /**
  * Initialize WalletConnect client
  */
-export async function initWalletConnect(): Promise<SignClient> {
+export async function initWalletConnect(): Promise<InstanceType<typeof SignClient>> {
   if (signClient) return signClient;
 
   signClient = await SignClient.init({
@@ -95,8 +95,8 @@ export async function getAddresses(): Promise<string[]> {
 
   // Filter for STX addresses
   return result.addresses
-    .filter((addr) => addr.symbol === 'STX')
-    .map((addr) => addr.address);
+    .filter((addr: { symbol: string; address: string }) => addr.symbol === 'STX')
+    .map((addr: { symbol: string; address: string }) => addr.address);
 }
 
 /**
@@ -161,67 +161,6 @@ export async function signTransaction(params: {
 }
 
 /**
- * Transfer STX tokens
- * Implements: stx_transferStx
- */
-export async function transferStx(params: {
-  sender: string;
-  recipient: string;
-  amount: string;
-  memo?: string;
-  network?: 'mainnet' | 'testnet' | 'devnet';
-}): Promise<{ txid: string; transaction: string }> {
-  if (!signClient || !currentSession) {
-    throw new Error('WalletConnect not connected');
-  }
-
-  const result = await signClient.request<{ txid: string; transaction: string }>({
-    topic: currentSession.topic,
-    chainId: `stacks:${process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? '1' : '2147483648'}`,
-    request: {
-      method: 'stx_transferStx',
-      params: {
-        ...params,
-        network: params.network || process.env.NEXT_PUBLIC_NETWORK || 'testnet',
-      },
-    },
-  });
-
-  return result;
-}
-
-/**
- * Sign a message
- * Implements: stx_signMessage
- */
-export async function signMessage(params: {
-  address: string;
-  message: string;
-  messageType?: 'utf8' | 'structured';
-  network?: 'mainnet' | 'testnet' | 'devnet';
-  domain?: string;
-}): Promise<{ signature: string }> {
-  if (!signClient || !currentSession) {
-    throw new Error('WalletConnect not connected');
-  }
-
-  const result = await signClient.request<{ signature: string }>({
-    topic: currentSession.topic,
-    chainId: `stacks:${process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ? '1' : '2147483648'}`,
-    request: {
-      method: 'stx_signMessage',
-      params: {
-        ...params,
-        messageType: params.messageType || 'utf8',
-        network: params.network || process.env.NEXT_PUBLIC_NETWORK || 'testnet',
-      },
-    },
-  });
-
-  return result;
-}
-
-/**
  * Disconnect wallet
  */
 export async function disconnectWallet(): Promise<void> {
@@ -255,6 +194,6 @@ export function getSession(): SessionTypes.Struct | null {
 /**
  * Get sign client
  */
-export function getSignClient(): SignClient | null {
+export function getSignClient(): InstanceType<typeof SignClient> | null {
   return signClient;
 }
