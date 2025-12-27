@@ -37,7 +37,7 @@ export function ActionButtons() {
       transition: {
         delay: i * 0.1,
         duration: 0.4,
-        type: 'spring',
+        type: 'spring' as const,
       },
     }),
   };
