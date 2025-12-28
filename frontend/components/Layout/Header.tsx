@@ -5,6 +5,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useWallet } from '@/context/WalletContext';
 import { Button } from '@/components/UI/Button';
 import { CopyButton } from '@/components/UI/CopyButton';
