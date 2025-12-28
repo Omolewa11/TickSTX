@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 
 export function Header() {
   const { address, isConnected, isOwner, connect, disconnect, isConnecting } = useWallet();
+  const pathname = usePathname();
 
   return (
     <motion.header
@@ -27,16 +28,42 @@ export function Header() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center animate-float">
-              <span className="text-2xl font-bold text-white">⚡</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold gradient-text font-heading">
-                TickSTX
-              </h1>
-              <p className="text-xs text-text-muted">Counter on Stacks</p>
-            </div>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center animate-float">
+                <span className="text-2xl font-bold text-white">⚡</span>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold gradient-text font-heading">
+                  TickSTX
+                </h1>
+                <p className="text-xs text-text-muted">Counter on Stacks</p>
+              </div>
+            </Link>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              <Link
+                href="/"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  pathname === '/'
+                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                    : 'text-text-muted hover:text-cyan-400 hover:bg-cyan-500/10'
+                }`}
+              >
+                Counter
+              </Link>
+              <Link
+                href="/dashboard"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  pathname === '/dashboard'
+                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                    : 'text-text-muted hover:text-cyan-400 hover:bg-cyan-500/10'
+                }`}
+              >
+                Dashboard
+              </Link>
+            </nav>
           </div>
 
           {/* Wallet Connection */}
