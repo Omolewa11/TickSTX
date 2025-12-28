@@ -104,3 +104,97 @@ export function useStats() {
       console.error('Failed to save activity:', error);
     }
   }, [loadActivities]);
+
+  /**
+   * Fetch current counter value from contract
+   */
+  const fetchCounterValue = useCallback(async () => {
+    try {
+      const value = await getCounterValue();
+      setStats((prev) => ({ ...prev, currentValue: value, isLoading: false, error: null }));
+    } catch (error) {
+      console.error('Failed to fetch counter value:', error);
+      setStats((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: 'Failed to fetch counter value',
+      }));
+    }
+  }, []);
+
+  /**
+   * Calculate statistics from activities
+   */
+  const calculateStats = useCallback(() => {
+    const activities = loadActivities();
+    const totalIncrements = activities.filter((a) => a.type === 'increment').length;
+    const totalDecrements = activities.filter((a) => a.type === 'decrement').length;
+    const totalOperations = activities.length;
+
+    setStats((prev) => ({
+      ...prev,
+      recentActivities: activities,
+      totalOperations,
+      totalIncrements,
+      totalDecrements,
+    }));
+  }, [loadActivities]);
+
+  /**
+   * Refresh all stats
+   */
+  const refresh = useCallback(async () => {
+    setStats((prev) => ({ ...prev, isLoading: true }));
+    await fetchCounterValue();
+    calculateStats();
+  }, [fetchCounterValue, calculateStats]);
+
+  /**
+   * Clear all statistics
+   */
+  const clearStats = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    localStorage.removeItem(STORAGE_KEY);
+    setStats({
+      currentValue: 0,
+      totalOperations: 0,
+      totalIncrements: 0,
+      totalDecrements: 0,
+      recentActivities: [],
+      isLoading: false,
+      error: null,
+    });
+  }, []);
+
+  // Initial load
+  useEffect(() => {
+    fetchCounterValue();
+    calculateStats();
+  }, [fetchCounterValue, calculateStats]);
+
+  // Auto-refresh counter value every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchCounterValue();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchCounterValue]);
+
+  return {
+    ...stats,
+    refresh,
+    saveActivity,
+    clearStats,
+  };
+}
+
+/**
+ * Hook to track a transaction
+ * Call this after a successful transaction to log it
+ */
+export function useTrackActivity() {
+  const { saveActivity } = useStats();
+  return saveActivity;
+}
