@@ -7,6 +7,8 @@
 import React from 'react';
 import { useWallet } from '@/context/WalletContext';
 import { Button } from '@/components/UI/Button';
+import { CopyButton } from '@/components/UI/CopyButton';
+import { NetworkBadge } from '@/components/UI/NetworkBadge';
 import { truncateAddress } from '@/utils/helpers';
 import { motion } from 'framer-motion';
 
@@ -36,30 +38,32 @@ export function Header() {
           </div>
 
           {/* Wallet Connection */}
-          <div className="flex items-center gap-4">
-            {/* Network Indicator */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-neon-cyan border-opacity-30">
-              <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-              <span className="text-sm text-text-secondary capitalize">
-                {process.env.NEXT_PUBLIC_NETWORK}
-              </span>
+          <div className="flex items-center gap-3">
+            {/* Network Badge */}
+            <div className="hidden md:block">
+              <NetworkBadge network={process.env.NEXT_PUBLIC_NETWORK as 'mainnet' | 'testnet'} />
             </div>
 
             {/* Owner Badge */}
             {isConnected && isOwner && (
-              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-neon-yellow border-opacity-30">
-                <span className="text-sm text-neon-yellow">👑 Owner</span>
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-yellow-500/30 bg-yellow-500/10">
+                <span className="text-sm text-yellow-400">👑 Owner</span>
               </div>
             )}
 
             {/* Wallet Button */}
             {isConnected && address ? (
               <div className="flex items-center gap-2">
-                <div className="hidden sm:block px-4 py-2 rounded-lg glass border border-neon-cyan border-opacity-30">
-                  <p className="text-sm font-mono text-neon-cyan">
-                    {truncateAddress(address)}
-                  </p>
+                {/* Address Display with Copy Button */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <div className="px-4 py-2 rounded-lg glass border border-cyan-500/30">
+                    <p className="text-sm font-mono text-cyan-400">
+                      {truncateAddress(address)}
+                    </p>
+                  </div>
+                  <CopyButton text={address} label="" className="px-2" />
                 </div>
+
                 <Button
                   variant="secondary"
                   size="sm"
