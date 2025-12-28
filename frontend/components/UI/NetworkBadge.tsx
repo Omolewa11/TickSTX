@@ -50,3 +50,28 @@ export function NetworkBadge({ network, className = '' }: NetworkBadgeProps) {
     </div>
   );
 }
+
+// Alternative: Compact version without label
+export function NetworkDot({ network, className = '' }: NetworkBadgeProps) {
+  const isMainnet = network === 'mainnet';
+
+  return (
+    <span
+      className={`relative flex h-2 w-2 ${className}`}
+      title={`Connected to ${network}`}
+    >
+      <span
+        className={`
+          animate-ping absolute inline-flex h-full w-full rounded-full opacity-75
+          ${isMainnet ? 'bg-green-400' : 'bg-orange-400'}
+        `}
+      />
+      <span
+        className={`
+          relative inline-flex rounded-full h-2 w-2
+          ${isMainnet ? 'bg-green-500' : 'bg-orange-500'}
+        `}
+      />
+    </span>
+  );
+}
