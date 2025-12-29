@@ -138,10 +138,10 @@ export function ActivityChart({ data, title = 'Activity Overview' }: ActivityCha
               {data.map((item) => (
                 <div key={item.label} className="flex items-center gap-2">
                   <div
-                    className="w-3 h-3 rounded-full ring-2 ring-offset-2 ring-offset-bg-secondary"
+                    className="w-3 h-3 rounded-full"
                     style={{
                       backgroundColor: item.color,
-                      ringColor: `${item.color}33`,
+                      boxShadow: `0 0 0 2px ${item.color}33`,
                     }}
                   />
                   <span className="text-text-muted">{item.label}</span>
