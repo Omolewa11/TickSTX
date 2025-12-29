@@ -134,10 +134,16 @@ export function useContract() {
    */
   const decrementBy = useCallback(
     async (amount: number) => {
-      return executeTransaction(
+      const result = await executeTransaction(
         () => decrementByAmount(amount),
         `Counter decreased by ${amount}! ⬇️`
       );
+
+      if (result) {
+        saveActivity('decrement', amount, result.txid);
+      }
+
+      return result;
     },
     [executeTransaction]
   );
