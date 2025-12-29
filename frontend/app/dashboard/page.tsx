@@ -11,7 +11,7 @@ import { StatsCard } from '@/components/Dashboard/StatsCard';
 import { ActivityChart } from '@/components/Dashboard/ActivityChart';
 import { RecentActivity } from '@/components/Dashboard/RecentActivity';
 import { useStats } from '@/hooks/useStats';
-import { Spinner } from '@/components/UI/Spinner';
+import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
 
 export default function DashboardPage() {
   const {
@@ -87,7 +87,7 @@ export default function DashboardPage() {
         {/* Loading State */}
         {isLoading && !error ? (
           <div className="flex items-center justify-center py-20">
-            <Spinner size="lg" />
+            <LoadingSpinner size="lg" />
           </div>
         ) : (
           /* Dashboard Content Grid */
