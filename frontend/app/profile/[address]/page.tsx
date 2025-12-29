@@ -10,35 +10,28 @@ import { useParams, useRouter } from 'next/navigation';
 import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
 import { CopyButton } from '@/components/UI/CopyButton';
 import { truncateAddress } from '@/utils/helpers';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 export default function ProfilePage() {
   const params = useParams();
   const router = useRouter();
   const address = params?.address as string;
 
-  // TODO: Replace with real hook
-  const isLoading = false;
-  const error = null;
+  // Fetch real user data from blockchain
+  const { profile, isLoading, error } = useUserProfile(address);
 
-  // Mock data - will be replaced with real user data
-  const userProfile = {
+  // Use profile data or provide defaults
+  const userProfile = profile || {
     address: address,
-    rank: 5,
-    totalOperations: 42,
-    increments: 30,
-    decrements: 12,
-    netContribution: 18,
-    firstSeen: new Date('2024-01-15'),
-    lastActive: new Date(),
-    achievements: [
-      { id: 'first-tx', name: 'First Steps', icon: '🎯', description: 'Made your first transaction' },
-      { id: '10-ops', name: 'Getting Started', icon: '⭐', description: 'Completed 10 operations' },
-      { id: 'incrementer', name: 'Incrementer', icon: '⬆️', description: 'More increments than decrements' },
-    ],
-    recentTransactions: [
-      { txId: '0x123', type: 'increment', amount: 1, timestamp: new Date() },
-      { txId: '0x456', type: 'decrement', amount: 1, timestamp: new Date(Date.now() - 3600000) },
-    ],
+    rank: 0,
+    totalOperations: 0,
+    increments: 0,
+    decrements: 0,
+    netContribution: 0,
+    firstSeen: null,
+    lastActive: null,
+    achievements: [],
+    recentTransactions: [],
   };
 
   const getMedalEmoji = (rank: number) => {
