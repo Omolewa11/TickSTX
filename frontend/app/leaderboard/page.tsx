@@ -7,65 +7,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { truncateAddress } from '@/utils/helpers';
-
-interface LeaderboardEntry {
-  address: string;
-  operations: number;
-  increments: number;
-  decrements: number;
-  netContribution: number;
-  rank: number;
-}
-
-type LeaderboardCategory = 'all' | 'incrementers' | 'decrementers' | 'active';
+import { useLeaderboard, type LeaderboardCategory } from '@/hooks/useLeaderboard';
+import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
 
 export default function LeaderboardPage() {
   const [category, setCategory] = useState<LeaderboardCategory>('all');
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data - will be replaced with real blockchain data
-  const mockLeaderboard: LeaderboardEntry[] = [
-    {
-      address: 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7',
-      operations: 150,
-      increments: 120,
-      decrements: 30,
-      netContribution: 90,
-      rank: 1,
-    },
-    {
-      address: 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE',
-      operations: 98,
-      increments: 85,
-      decrements: 13,
-      netContribution: 72,
-      rank: 2,
-    },
-    {
-      address: 'SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS',
-      operations: 75,
-      increments: 45,
-      decrements: 30,
-      netContribution: 15,
-      rank: 3,
-    },
-    {
-      address: 'SPQM1E8Y8R5R9BT5HTZ1GNWXME7ZC1YSK8A9R6D5',
-      operations: 62,
-      increments: 50,
-      decrements: 12,
-      netContribution: 38,
-      rank: 4,
-    },
-    {
-      address: 'SP37E1R5QCZKJDKKAW7XH8J8WYTRQV39NWADG6WH4',
-      operations: 45,
-      increments: 30,
-      decrements: 15,
-      netContribution: 15,
-      rank: 5,
-    },
-  ];
+  // Fetch real blockchain data
+  const { entries, isLoading, error, refresh } = useLeaderboard(category);
 
   const categories = [
     { id: 'all' as LeaderboardCategory, label: 'Overall', icon: '🏆' },
