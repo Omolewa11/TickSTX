@@ -141,7 +141,7 @@ export default function LeaderboardPage() {
 
               {/* Leaderboard Entries */}
               <div className="divide-y divide-cyan-500/10">
-                {mockLeaderboard.map((entry, index) => (
+                {entries.map((entry, index) => (
                   <motion.div
                     key={entry.address}
                     initial={{ opacity: 0, x: -20 }}
@@ -218,7 +218,7 @@ export default function LeaderboardPage() {
               </div>
 
               {/* Empty State */}
-              {mockLeaderboard.length === 0 && (
+              {entries.length === 0 && !isLoading && (
                 <div className="text-center py-20">
                   <div className="text-6xl mb-4">📊</div>
                   <h3 className="text-xl font-semibold text-text-primary mb-2">
