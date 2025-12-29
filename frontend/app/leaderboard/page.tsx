@@ -241,15 +241,15 @@ export default function LeaderboardPage() {
           className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {[
-            { label: 'Total Participants', value: mockLeaderboard.length, icon: '👥' },
+            { label: 'Total Participants', value: entries.length, icon: '👥' },
             {
               label: 'Total Operations',
-              value: mockLeaderboard.reduce((sum, e) => sum + e.operations, 0),
+              value: entries.reduce((sum, e) => sum + e.operations, 0),
               icon: '⚡',
             },
             {
               label: 'Net Counter Change',
-              value: mockLeaderboard.reduce((sum, e) => sum + e.netContribution, 0),
+              value: entries.reduce((sum, e) => sum + e.netContribution, 0),
               icon: '📈',
             },
           ].map((stat, index) => (
