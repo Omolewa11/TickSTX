@@ -112,6 +112,26 @@ export default function LeaderboardPage() {
           </div>
         </motion.div>
 
+        {/* Error State */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative group mb-8"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-red-500/20 rounded-xl blur opacity-60" />
+            <div className="relative glass rounded-xl p-6 border border-red-500/30 backdrop-blur-xl bg-bg-secondary/80">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">⚠️</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-red-400 mb-1">Error Loading Leaderboard</h3>
+                  <p className="text-sm text-text-muted">{error}</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Leaderboard Table */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -124,6 +144,19 @@ export default function LeaderboardPage() {
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-xl blur opacity-60 group-hover:opacity-100 transition duration-500" />
             <div className="relative glass rounded-xl border border-cyan-500/20 backdrop-blur-xl bg-bg-secondary/80 overflow-hidden">
+              {/* Loading State */}
+              {isLoading && (
+                <div className="flex items-center justify-center py-20">
+                  <div className="text-center">
+                    <LoadingSpinner size="lg" />
+                    <p className="mt-4 text-text-muted">Loading leaderboard data...</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Content - only show when not loading */}
+              {!isLoading && (
+                <>
               {/* Table Header */}
               <div className="grid grid-cols-12 gap-4 p-6 border-b border-cyan-500/10 bg-bg-secondary/50">
                 <div className="col-span-1 text-text-muted font-semibold text-sm">Rank</div>
@@ -228,6 +261,8 @@ export default function LeaderboardPage() {
                     Be the first to interact with the counter!
                   </p>
                 </div>
+              )}
+                </>
               )}
             </div>
           </motion.div>
