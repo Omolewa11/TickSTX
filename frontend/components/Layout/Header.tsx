@@ -63,6 +63,16 @@ export function Header() {
               >
                 Dashboard
               </Link>
+              <Link
+                href="/about"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  pathname === '/about'
+                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                    : 'text-text-muted hover:text-cyan-400 hover:bg-cyan-500/10'
+                }`}
+              >
+                About
+              </Link>
             </nav>
           </div>
 
