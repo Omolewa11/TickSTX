@@ -152,10 +152,16 @@ export function useContract() {
    * Reset counter to zero (owner only)
    */
   const resetCounter = useCallback(async () => {
-    return executeTransaction(
+    const result = await executeTransaction(
       () => resetCounterContract(),
       'Counter reset to 0! 🔄'
     );
+
+    if (result) {
+      saveActivity('reset', 0, result.txid);
+    }
+
+    return result;
   }, [executeTransaction]);
 
   return {
