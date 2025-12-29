@@ -115,10 +115,16 @@ export function useContract() {
    */
   const incrementBy = useCallback(
     async (amount: number) => {
-      return executeTransaction(
+      const result = await executeTransaction(
         () => incrementByAmount(amount),
         `Counter increased by ${amount}! ⬆️`
       );
+
+      if (result) {
+        saveActivity('increment', amount, result.txid);
+      }
+
+      return result;
     },
     [executeTransaction]
   );
