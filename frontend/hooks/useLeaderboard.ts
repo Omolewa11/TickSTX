@@ -167,3 +167,117 @@ function calculateUserStats(transactions: Transaction[]): Map<string, Leaderboar
 
   return userStats;
 }
+
+/**
+ * Rank users based on category
+ */
+function rankUsers(
+  userStats: Map<string, LeaderboardEntry>,
+  category: LeaderboardCategory
+): LeaderboardEntry[] {
+  const entries = Array.from(userStats.values());
+
+  // Sort based on category
+  let sortedEntries: LeaderboardEntry[];
+
+  switch (category) {
+    case 'incrementers':
+      sortedEntries = entries.sort((a, b) => b.increments - a.increments);
+      break;
+
+    case 'decrementers':
+      sortedEntries = entries.sort((a, b) => b.decrements - a.decrements);
+      break;
+
+    case 'active':
+      sortedEntries = entries.sort((a, b) => b.operations - a.operations);
+      break;
+
+    case 'all':
+    default:
+      // Rank by net contribution, with operations as tiebreaker
+      sortedEntries = entries.sort((a, b) => {
+        if (b.netContribution !== a.netContribution) {
+          return b.netContribution - a.netContribution;
+        }
+        return b.operations - a.operations;
+      });
+      break;
+  }
+
+  // Assign ranks
+  return sortedEntries.map((entry, index) => ({
+    ...entry,
+    rank: index + 1,
+  }));
+}
+
+/**
+ * Custom hook for leaderboard data
+ */
+export function useLeaderboard(category: LeaderboardCategory = 'all') {
+  const [state, setState] = useState<LeaderboardState>({
+    entries: [],
+    isLoading: true,
+    error: null,
+  });
+
+  /**
+   * Fetch and process leaderboard data
+   */
+  const fetchLeaderboard = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      // Fetch transactions from blockchain
+      const transactions = await fetchContractTransactions();
+
+      // Calculate user statistics
+      const userStats = calculateUserStats(transactions);
+
+      // Rank users based on category
+      const rankedEntries = rankUsers(userStats, category);
+
+      setState({
+        entries: rankedEntries,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      setState({
+        entries: [],
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch leaderboard data',
+      });
+    }
+  }, [category]);
+
+  /**
+   * Refresh leaderboard data
+   */
+  const refresh = useCallback(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
+
+  // Initial load and reload when category changes
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
+
+  // Auto-refresh every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLeaderboard();
+    }, 120000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, [fetchLeaderboard]);
+
+  return {
+    entries: state.entries,
+    isLoading: state.isLoading,
+    error: state.error,
+    refresh,
+  };
+}
