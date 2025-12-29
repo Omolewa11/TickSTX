@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { StatsCard } from '@/components/Dashboard/StatsCard';
 import { ActivityChart } from '@/components/Dashboard/ActivityChart';
 import { RecentActivity } from '@/components/Dashboard/RecentActivity';
+import { EmptyState } from '@/components/Dashboard/EmptyState';
 import { useStats } from '@/hooks/useStats';
 import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
 
