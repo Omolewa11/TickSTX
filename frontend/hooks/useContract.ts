@@ -98,10 +98,16 @@ export function useContract() {
    * Decrement counter by 1
    */
   const decrement = useCallback(async () => {
-    return executeTransaction(
+    const result = await executeTransaction(
       () => decrementCounter(),
       'Counter decremented! ⬇️'
     );
+
+    if (result) {
+      saveActivity('decrement', 1, result.txid);
+    }
+
+    return result;
   }, [executeTransaction]);
 
   /**
