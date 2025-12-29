@@ -14,6 +14,7 @@ import {
 } from '@/lib/contract';
 import { useWallet } from '@/context/WalletContext';
 import { toast } from '@/components/UI/Toast';
+import { saveActivity } from '@/lib/activityTracker';
 import type { TransactionState } from '@/types';
 
 /**
@@ -81,20 +82,32 @@ export function useContract() {
    * Increment counter by 1
    */
   const increment = useCallback(async () => {
-    return executeTransaction(
+    const result = await executeTransaction(
       () => incrementCounter(),
       'Counter incremented! ⬆️'
     );
+
+    if (result) {
+      saveActivity('increment', 1, result.txid);
+    }
+
+    return result;
   }, [executeTransaction]);
 
   /**
    * Decrement counter by 1
    */
   const decrement = useCallback(async () => {
-    return executeTransaction(
+    const result = await executeTransaction(
       () => decrementCounter(),
       'Counter decremented! ⬇️'
     );
+
+    if (result) {
+      saveActivity('decrement', 1, result.txid);
+    }
+
+    return result;
   }, [executeTransaction]);
 
   /**
