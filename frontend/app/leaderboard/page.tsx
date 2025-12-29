@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { truncateAddress } from '@/utils/helpers';
 import { useLeaderboard, type LeaderboardCategory } from '@/hooks/useLeaderboard';
 import { LoadingSpinner } from '@/components/UI/LoadingSpinner';
@@ -195,18 +196,18 @@ export default function LeaderboardPage() {
                       </motion.div>
                     </div>
 
-                    {/* Address */}
+                    {/* Address - Clickable Link to Profile */}
                     <div className="col-span-5 flex items-center">
-                      <div className="relative group/address">
+                      <Link href={`/profile/${entry.address}`} className="relative group/address">
                         <div
                           className={`absolute -inset-1 bg-gradient-to-r ${getRankColor(
                             entry.rank
                           )} rounded-lg opacity-0 group-hover/address:opacity-20 blur transition duration-300`}
                         />
-                        <code className="relative px-3 py-2 rounded-lg bg-bg-secondary/80 border border-cyan-500/20 text-cyan-400 font-mono text-sm">
+                        <code className="relative px-3 py-2 rounded-lg bg-bg-secondary/80 border border-cyan-500/20 text-cyan-400 hover:text-cyan-300 font-mono text-sm cursor-pointer transition-colors">
                           {truncateAddress(entry.address)}
                         </code>
-                      </div>
+                      </Link>
                     </div>
 
                     {/* Operations */}
