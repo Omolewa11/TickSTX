@@ -289,13 +289,13 @@ export default function ProfilePage() {
                       <div>
                         <p className="text-text-muted mb-1">First Seen</p>
                         <p className="text-text-primary font-semibold">
-                          {userProfile.firstSeen.toLocaleDateString()}
+                          {userProfile.firstSeen ? userProfile.firstSeen.toLocaleDateString() : 'N/A'}
                         </p>
                       </div>
                       <div>
                         <p className="text-text-muted mb-1">Last Active</p>
                         <p className="text-text-primary font-semibold">
-                          {userProfile.lastActive.toLocaleDateString()}
+                          {userProfile.lastActive ? userProfile.lastActive.toLocaleDateString() : 'N/A'}
                         </p>
                       </div>
                       <div>
