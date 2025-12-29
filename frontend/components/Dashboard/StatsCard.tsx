@@ -75,7 +75,7 @@ export function StatsCard({ title, value, icon, trend, className = '' }: StatsCa
 
         {/* Value */}
         <div className="relative text-4xl font-bold gradient-text">
-          {typeof value === 'number' ? value.toLocaleString() : value}
+          {typeof displayValue === 'number' ? displayValue.toLocaleString() : displayValue}
         </div>
 
         {/* Shimmer effect */}
