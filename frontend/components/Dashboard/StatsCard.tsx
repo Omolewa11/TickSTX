@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useCountUp } from '@/hooks/useCountUp';
 
 interface StatsCardProps {
   title: string;
@@ -19,6 +20,11 @@ interface StatsCardProps {
 }
 
 export function StatsCard({ title, value, icon, trend, className = '' }: StatsCardProps) {
+  // Animate number counting for numeric values
+  const displayValue = typeof value === 'number'
+    ? useCountUp({ end: value, duration: 1500 })
+    : value;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
