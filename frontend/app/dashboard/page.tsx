@@ -135,11 +135,11 @@ export default function DashboardPage() {
               {totalOperations > 0 ? (
                 <ActivityChart data={chartData} title="Operations Breakdown" />
               ) : (
-                <div className="glass rounded-xl p-6 border border-border-default text-center">
-                  <p className="text-text-muted">
-                    No operations recorded yet. Start using the counter to see statistics!
-                  </p>
-                </div>
+                <EmptyState
+                  title="No Operations Yet"
+                  description="Start using the counter to see statistics and charts appear here!"
+                  icon="📊"
+                />
               )}
             </motion.div>
 
